@@ -1,46 +1,124 @@
 package nl.sajansen.scenetimer
 
-import gui.Refreshable
+import nl.sajansen.scenetimer.client.objects.TimerMessage
+import nl.sajansen.scenetimer.client.objects.TimerState
 import themes.Theme
-import java.awt.BorderLayout
-import java.awt.Component
-import java.awt.Font
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.SwingConstants
+import themes.DarkTheme
+import java.awt.*
+import javax.swing.*
+import javax.swing.border.EmptyBorder
 
-class SceneTimerDetailPanel: JPanel(), Refreshable, OBSSceneTimerRefreshable {
+class SceneTimerDetailPanel: JPanel(), TimerRefreshable {
 
-    private val countUpTimerLabel = JLabel("Loading...")
+    val sceneLabel: JLabel = JLabel("Loading...")
+    val timerUpLabel: JLabel = JLabel()
+    val timerDownLabel: JLabel = JLabel()
+
+    private var TIMER_APPROACHING_FONT_COLOR = Color(51, 51, 51)
+    private var TIMER_APPROACHING_BACKGROUND_COLOR = Color.ORANGE
+    private var TIMER_EXCEEDED_FONT_COLOR = Color(51, 51, 51)
+    private var TIMER_EXCEEDED_BACKGROUND_COLOR = Color.RED
 
     init {
         initGui()
 
-        GUI.register(this)
-        OBSSceneTimerRefreshableRegister.register(this)
+        TimerRefreshableRegister.register(this)
 
-        switchedScenes()
+        if (Theme.get is DarkTheme) {
+            TIMER_APPROACHING_FONT_COLOR = Color(51, 51, 51)
+            TIMER_APPROACHING_BACKGROUND_COLOR = Color(201, 127, 0)
+            TIMER_EXCEEDED_FONT_COLOR = Color(51, 51, 51)
+            TIMER_EXCEEDED_BACKGROUND_COLOR = Color(255, 0, 0)
+        }
+
+        refreshTimer()
     }
 
     private fun initGui() {
-        layout = BorderLayout()
+        setSize(800, 200)
+        minimumSize = Dimension(0, 0)
 
-        countUpTimerLabel.horizontalAlignment = SwingConstants.CENTER
-        countUpTimerLabel.alignmentX = Component.CENTER_ALIGNMENT
-        countUpTimerLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.fontSize)
-        add(countUpTimerLabel, BorderLayout.CENTER)
-    }
+        layout = BorderLayout(10, 10)
+        border = EmptyBorder(10, 10, 10, 10)
 
-    override fun windowClosing(window: Component?) {
-        super.windowClosing(window)
-        OBSSceneTimerRefreshableRegister.unregister(this)
-    }
+        sceneLabel.horizontalAlignment = SwingConstants.CENTER
+        sceneLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, 24)
 
-    override fun switchedScenes() {
-        OBSSceneTimer.reset()
+        val topPanel = JPanel()
+        topPanel.background = null
+        topPanel.layout = BorderLayout(10, 10)
+        topPanel.add(sceneLabel, BorderLayout.CENTER)
+        add(topPanel, BorderLayout.PAGE_START)
+
+        timerUpLabel.toolTipText = "Time elapsed"
+        timerUpLabel.horizontalAlignment = SwingConstants.CENTER
+        timerUpLabel.alignmentX = Component.CENTER_ALIGNMENT
+        timerUpLabel.alignmentY = Component.CENTER_ALIGNMENT
+        timerUpLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.fontSize)
+
+        timerDownLabel.toolTipText = "Time remaining"
+        timerDownLabel.horizontalAlignment = SwingConstants.CENTER
+        timerDownLabel.alignmentX = Component.CENTER_ALIGNMENT
+        timerDownLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.fontSize)
+        timerDownLabel.isVisible = false
+
+        val timersPanel = JPanel()
+        timersPanel.background = null
+        timersPanel.layout = BoxLayout(timersPanel, BoxLayout.PAGE_AXIS)
+        timersPanel.add(Box.createVerticalGlue())
+        timersPanel.add(timerUpLabel)
+        timersPanel.add(Box.createRigidArea(Dimension(0, 20)))
+        timersPanel.add(timerDownLabel)
+        add(timersPanel, BorderLayout.CENTER)
     }
 
     override fun refreshTimer() {
-        countUpTimerLabel.text = OBSSceneTimer.getTimerAsClock()
+        if (OBSSceneTimer.timerMessage == null) {
+            sceneLabel.text = "No data received"
+            return
+        }
+
+        updateLabelsForTimer(OBSSceneTimer.timerMessage!!)
+        updateColorsForTimer(OBSSceneTimer.timerMessage!!)
+        repaint()
+    }
+
+    private fun updateLabelsForTimer(timerMessage: TimerMessage) {
+        sceneLabel.text = timerMessage.sceneName
+        timerUpLabel.text = timerMessage.elapsedTime
+
+        if (timerMessage.isTimed) {
+            timerDownLabel.text = timerMessage.remainingTime
+            timerDownLabel.isVisible = true
+        } else {
+            timerDownLabel.isVisible = false
+        }
+    }
+
+    private fun updateColorsForTimer(timerMessage: TimerMessage) {
+        setColorsFor(timerMessage.timerState)
+    }
+
+    private fun setColorsFor(state: TimerState) {
+        when (state) {
+            TimerState.EXCEEDED -> {
+                setLabelsColor(TIMER_EXCEEDED_FONT_COLOR)
+                background = TIMER_EXCEEDED_BACKGROUND_COLOR
+            }
+            TimerState.APPROACHING -> {
+                setLabelsColor(TIMER_APPROACHING_FONT_COLOR)
+                background = TIMER_APPROACHING_BACKGROUND_COLOR
+            }
+            else -> {
+                setLabelsColor(Theme.get.FONT_COLOR)
+                background = Theme.get.BACKGROUND_COLOR
+            }
+        }
+    }
+
+    private fun setLabelsColor(color: Color) {
+        sceneLabel.foreground = color
+        timerUpLabel.foreground = color
+        timerDownLabel.foreground = color
     }
 }

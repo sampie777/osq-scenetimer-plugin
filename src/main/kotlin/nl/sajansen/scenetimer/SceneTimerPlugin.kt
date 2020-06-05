@@ -1,6 +1,7 @@
 package nl.sajansen.scenetimer
 
 import gui.utils.getMainFrameComponent
+import nl.sajansen.scenetimer.client.TimerClient
 import plugins.PluginLoader
 import plugins.common.DetailPanelBasePlugin
 import nl.sajansen.scenetimer.config.ConfigWindow
@@ -22,11 +23,13 @@ class SceneTimerPlugin : DetailPanelBasePlugin {
         super.enable()
         SceneTimerProperties.writeToFile = true
         SceneTimerProperties.load()
+        TimerClient.connect("ws://localhost:4050/")
         PluginLoader.registerDetailPanelPlugin(this)
     }
 
     override fun disable() {
         super.disable()
+        TimerClient.disconnect()
         PluginLoader.unregisterDetailPanelPlugin(this)
     }
 

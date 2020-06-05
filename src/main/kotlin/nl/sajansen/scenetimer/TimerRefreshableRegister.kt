@@ -1,20 +1,11 @@
 package nl.sajansen.scenetimer
 
-import gui.Refreshable
 import java.util.logging.Logger
-import javax.swing.JFrame
 
-interface OBSSceneTimerRefreshable {
-    fun refreshTimer() {}
-}
+object TimerRefreshableRegister {
+    private val logger = Logger.getLogger(TimerRefreshableRegister::class.java.name)
 
-
-object OBSSceneTimerRefreshableRegister {
-    private val logger = Logger.getLogger(OBSSceneTimerRefreshableRegister::class.java.name)
-
-    var currentFrame: JFrame? = null
-
-    private val components: HashSet<Refreshable> = HashSet()
+    private val components: HashSet<TimerRefreshable> = HashSet()
 
     fun refreshTimer() {
         val componentsCopy = components.toTypedArray()
@@ -23,16 +14,16 @@ object OBSSceneTimerRefreshableRegister {
         }
     }
 
-    fun register(component: Refreshable) {
+    fun register(component: TimerRefreshable) {
         logger.info("Registering component: ${component::class.java}")
         components.add(component)
     }
 
-    fun isRegistered(component: Refreshable): Boolean {
+    fun isRegistered(component: TimerRefreshable): Boolean {
         return components.contains(component)
     }
 
-    fun unregister(component: Refreshable) {
+    fun unregister(component: TimerRefreshable) {
         logger.info("Unregistering component: ${component::class.java}")
         components.remove(component)
     }
@@ -41,6 +32,4 @@ object OBSSceneTimerRefreshableRegister {
         logger.info("Unregistering all (${components.size}) components")
         components.clear()
     }
-
-    fun registeredComponents() = components
 }
