@@ -6,6 +6,8 @@ import gui.config.formcomponents.HeaderFormComponent
 import gui.config.formcomponents.TextFormComponent
 import objects.notifications.Notifications
 import nl.sajansen.scenetimer.SceneTimerProperties
+import nl.sajansen.scenetimer.config.formInputs.NumberFormInput
+import nl.sajansen.scenetimer.config.formInputs.StringFormInput
 import java.awt.BorderLayout
 import java.awt.GridLayout
 import java.util.logging.Logger
@@ -25,18 +27,46 @@ class ConfigEditPanel : JPanel() {
     }
 
     private fun createFormInputs() {
+        formComponents.add(HeaderFormComponent("Timer Server"))
+        formComponents.add(
+            StringFormInput(
+                "timerServerAddress",
+                SceneTimerProperties.timerServerAddress,
+                saveCallback = { value ->
+                    logger.info("Saving 'timerServerAddress' value: $value")
+                    SceneTimerProperties.timerServerAddress = value
+                },
+                labelText = "OBS websocket address",
+                allowEmpty = false
+            )
+        )
+
         formComponents.add(HeaderFormComponent("GUI"))
         formComponents.add(
             NumberFormInput<Int>(
-                "fontSize",
-                SceneTimerProperties.fontSize,
+                "timerCountUpFontSize",
+                SceneTimerProperties.timerCountUpFontSize,
                 saveCallback = { value ->
-                    println("Saving: $value")
-                    SceneTimerProperties.fontSize = value
+                    logger.info("Saving 'timerCountUpFontSize' value: $value")
+                    SceneTimerProperties.timerCountUpFontSize = value
                 },
-                labelText = "Font size of the timer",
+                labelText = "Font size of the elapsed time",
                 min = 1,
-                max = Int.MAX_VALUE)
+                max = Int.MAX_VALUE
+            )
+        )
+        formComponents.add(
+            NumberFormInput<Int>(
+                "timerCountDownFontSize",
+                SceneTimerProperties.timerCountDownFontSize,
+                saveCallback = { value ->
+                    logger.info("Saving 'timerCountDownFontSize' value: $value")
+                    SceneTimerProperties.timerCountDownFontSize = value
+                },
+                labelText = "Font size of the remaining time",
+                min = 1,
+                max = Int.MAX_VALUE
+            )
         )
     }
 

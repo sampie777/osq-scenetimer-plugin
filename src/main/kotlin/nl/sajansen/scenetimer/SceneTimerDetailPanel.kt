@@ -8,7 +8,7 @@ import java.awt.*
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
-class SceneTimerDetailPanel: JPanel(), TimerRefreshable {
+class SceneTimerDetailPanel : JPanel(), TimerRefreshable {
 
     val sceneLabel: JLabel = JLabel("Loading...")
     val timerUpLabel: JLabel = JLabel()
@@ -55,17 +55,20 @@ class SceneTimerDetailPanel: JPanel(), TimerRefreshable {
         timerUpLabel.horizontalAlignment = SwingConstants.CENTER
         timerUpLabel.alignmentX = Component.CENTER_ALIGNMENT
         timerUpLabel.alignmentY = Component.CENTER_ALIGNMENT
-        timerUpLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.fontSize)
+        timerUpLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.timerCountUpFontSize)
 
         timerDeviderLabel.horizontalAlignment = SwingConstants.CENTER
         timerDeviderLabel.alignmentX = Component.CENTER_ALIGNMENT
-        timerDeviderLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.fontSize)
+        timerDeviderLabel.font = Font(
+            Theme.get.FONT_FAMILY, Font.PLAIN,
+            minOf(SceneTimerProperties.timerCountUpFontSize, SceneTimerProperties.timerCountDownFontSize)
+        )
         timerDeviderLabel.isVisible = false
 
         timerDownLabel.toolTipText = "Time remaining"
         timerDownLabel.horizontalAlignment = SwingConstants.CENTER
         timerDownLabel.alignmentX = Component.CENTER_ALIGNMENT
-        timerDownLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.fontSize)
+        timerDownLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.timerCountDownFontSize)
         timerDownLabel.isVisible = false
 
         val timersPanel = JPanel()

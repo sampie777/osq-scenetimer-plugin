@@ -23,7 +23,7 @@ class SceneTimerPlugin : DetailPanelBasePlugin {
         super.enable()
         SceneTimerProperties.writeToFile = true
         SceneTimerProperties.load()
-        TimerClient.connect("ws://localhost:4050/")
+        TimerClient.connect(SceneTimerProperties.timerServerAddress)
         PluginLoader.registerDetailPanelPlugin(this)
     }
 

@@ -1,4 +1,4 @@
-package nl.sajansen.scenetimer.config
+package nl.sajansen.scenetimer.config.formInputs
 
 import themes.Theme
 import gui.config.formcomponents.FormInput

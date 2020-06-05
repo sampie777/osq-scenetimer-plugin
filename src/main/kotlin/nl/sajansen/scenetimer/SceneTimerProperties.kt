@@ -1,7 +1,7 @@
 package nl.sajansen.scenetimer
 
+import config.Config
 import getCurrentJarDirectory
-import java.awt.event.KeyEvent
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -18,7 +18,9 @@ object SceneTimerProperties {
     private val propertiesFilePath = getCurrentJarDirectory(this).absolutePath + File.separatorChar + "osq-scenetimer.properties"
     private val properties = Properties()
 
-    var fontSize: Int = 40
+    var timerServerAddress: String = Config.obsAddress.replace(":4444", ":4050")
+    var timerCountUpFontSize: Int = 40
+    var timerCountDownFontSize: Int = 48
 
     fun load() {
         logger.info("Loading scene timer plugin properties from: $propertiesFilePath")
@@ -29,7 +31,9 @@ object SceneTimerProperties {
             logger.info("No scene timer plugin properties file found, using defaults")
         }
 
-        fontSize = properties.getProperty("fontSize", "40").toInt()
+        timerServerAddress = properties.getProperty("timerServerAddress", timerServerAddress)
+        timerCountUpFontSize = properties.getProperty("timerCountUpFontSize", timerCountUpFontSize.toString()).toInt()
+        timerCountDownFontSize = properties.getProperty("timerCountDownFontSize", timerCountDownFontSize.toString()).toInt()
 
         if (!File(propertiesFilePath).exists()) {
             save()
@@ -38,7 +42,9 @@ object SceneTimerProperties {
 
     fun save() {
         logger.info("Saving scene timer plugin properties")
-        properties.setProperty("fontSize", fontSize.toString())
+        properties.setProperty("timerServerAddress", timerServerAddress.toString())
+        properties.setProperty("timerCountUpFontSize", timerCountUpFontSize.toString())
+        properties.setProperty("timerCountDownFontSize", timerCountDownFontSize.toString())
 
         if (!writeToFile) {
             return
