@@ -20,7 +20,7 @@ object SceneTimerProperties {
 
     var timerServerAddress: String = Config.obsAddress.replace(":4444", ":4050")
     var timerCountUpFontSize: Int = 40
-    var timerCountDownFontSize: Int = 48
+    var timerCountDownFontSize: Int = 56
 
     fun load() {
         logger.info("Loading scene timer plugin properties from: $propertiesFilePath")

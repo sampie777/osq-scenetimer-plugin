@@ -1,6 +1,5 @@
 package nl.sajansen.scenetimer.client
 
-
 import objects.notifications.Notifications
 import org.eclipse.jetty.websocket.api.Session
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest

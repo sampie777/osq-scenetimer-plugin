@@ -1,6 +1,5 @@
 package nl.sajansen.scenetimer.client
 
-
 import com.google.gson.Gson
 import nl.sajansen.scenetimer.OBSSceneTimer
 import nl.sajansen.scenetimer.TimerRefreshableRegister
