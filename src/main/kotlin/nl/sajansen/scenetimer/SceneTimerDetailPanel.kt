@@ -12,6 +12,7 @@ class SceneTimerDetailPanel: JPanel(), TimerRefreshable {
 
     val sceneLabel: JLabel = JLabel("Loading...")
     val timerUpLabel: JLabel = JLabel()
+    val timerDeviderLabel: JLabel = JLabel("/")
     val timerDownLabel: JLabel = JLabel()
 
     private var TIMER_APPROACHING_FONT_COLOR = Color(51, 51, 51)
@@ -42,7 +43,7 @@ class SceneTimerDetailPanel: JPanel(), TimerRefreshable {
         border = EmptyBorder(10, 10, 10, 10)
 
         sceneLabel.horizontalAlignment = SwingConstants.CENTER
-        sceneLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, 24)
+        sceneLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, 18)
 
         val topPanel = JPanel()
         topPanel.background = null
@@ -56,6 +57,11 @@ class SceneTimerDetailPanel: JPanel(), TimerRefreshable {
         timerUpLabel.alignmentY = Component.CENTER_ALIGNMENT
         timerUpLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.fontSize)
 
+        timerDeviderLabel.horizontalAlignment = SwingConstants.CENTER
+        timerDeviderLabel.alignmentX = Component.CENTER_ALIGNMENT
+        timerDeviderLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, SceneTimerProperties.fontSize)
+        timerDeviderLabel.isVisible = false
+
         timerDownLabel.toolTipText = "Time remaining"
         timerDownLabel.horizontalAlignment = SwingConstants.CENTER
         timerDownLabel.alignmentX = Component.CENTER_ALIGNMENT
@@ -64,10 +70,10 @@ class SceneTimerDetailPanel: JPanel(), TimerRefreshable {
 
         val timersPanel = JPanel()
         timersPanel.background = null
-        timersPanel.layout = BoxLayout(timersPanel, BoxLayout.PAGE_AXIS)
-        timersPanel.add(Box.createVerticalGlue())
+        timersPanel.layout = FlowLayout(FlowLayout.CENTER, 20, 20)
+        timersPanel.alignmentX = Component.CENTER_ALIGNMENT
         timersPanel.add(timerUpLabel)
-        timersPanel.add(Box.createRigidArea(Dimension(0, 20)))
+        timersPanel.add(timerDeviderLabel)
         timersPanel.add(timerDownLabel)
         add(timersPanel, BorderLayout.CENTER)
     }
@@ -88,9 +94,11 @@ class SceneTimerDetailPanel: JPanel(), TimerRefreshable {
         timerUpLabel.text = timerMessage.elapsedTime
 
         if (timerMessage.isTimed) {
+            timerDeviderLabel.isVisible = true
             timerDownLabel.text = timerMessage.remainingTime
             timerDownLabel.isVisible = true
         } else {
+            timerDeviderLabel.isVisible = false
             timerDownLabel.isVisible = false
         }
     }
@@ -119,6 +127,7 @@ class SceneTimerDetailPanel: JPanel(), TimerRefreshable {
     private fun setLabelsColor(color: Color) {
         sceneLabel.foreground = color
         timerUpLabel.foreground = color
+        timerDeviderLabel.foreground = color
         timerDownLabel.foreground = color
     }
 }
