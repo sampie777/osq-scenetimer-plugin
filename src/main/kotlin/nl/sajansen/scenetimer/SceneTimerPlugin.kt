@@ -2,6 +2,7 @@ package nl.sajansen.scenetimer
 
 import gui.utils.getMainFrameComponent
 import nl.sajansen.scenetimer.client.TimerClient
+import objects.notifications.Notifications
 import plugins.PluginLoader
 import plugins.common.DetailPanelBasePlugin
 import nl.sajansen.scenetimer.config.ConfigWindow
@@ -23,8 +24,17 @@ class SceneTimerPlugin : DetailPanelBasePlugin {
         super.enable()
         SceneTimerProperties.writeToFile = true
         SceneTimerProperties.load()
-        TimerClient.connect(SceneTimerProperties.timerServerAddress)
         PluginLoader.registerDetailPanelPlugin(this)
+
+        try {
+            Thread {
+                TimerClient.connect(SceneTimerProperties.timerServerAddress)
+            }.start()
+        } catch (e: Exception) {
+            logger.severe("Failed to start tread for connecting to scene timer server")
+            e.printStackTrace()
+            Notifications.add("Could not connect to scene timer server: ${e.localizedMessage}", "Scene Timer")
+        }
     }
 
     override fun disable() {

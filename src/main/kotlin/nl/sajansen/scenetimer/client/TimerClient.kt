@@ -23,7 +23,7 @@ object TimerClient {
         } catch (e: Exception) {
             logger.severe("Failed to start connection")
             e.printStackTrace()
-            Notifications.add("Could not connect to timer server: $url", "Scene Timer")
+            Notifications.add("Could not connect to timer server ($url): ${e.localizedMessage}", "Scene Timer")
         }
     }
 
