@@ -40,6 +40,19 @@ class ConfigEditPanel : JPanel() {
                 allowEmpty = false
             )
         )
+        formComponents.add(
+            NumberFormInput<Long>(
+                "reconnectionTimeout",
+                SceneTimerProperties.reconnectionTimeout,
+                saveCallback = { value ->
+                    logger.info("Saving 'reconnectionTimeout' value: $value")
+                    SceneTimerProperties.reconnectionTimeout = value
+                },
+                labelText = "Timeout between reconnections",
+                min = 0,
+                max = Long.MAX_VALUE
+            )
+        )
 
         formComponents.add(HeaderFormComponent("GUI"))
         formComponents.add(

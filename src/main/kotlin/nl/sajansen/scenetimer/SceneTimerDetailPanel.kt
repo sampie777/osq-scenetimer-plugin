@@ -1,5 +1,7 @@
 package nl.sajansen.scenetimer
 
+import nl.sajansen.scenetimer.client.TimerClient
+import nl.sajansen.scenetimer.client.objects.ConnectionState
 import nl.sajansen.scenetimer.client.objects.TimerMessage
 import nl.sajansen.scenetimer.client.objects.TimerState
 import themes.Theme
@@ -10,6 +12,7 @@ import javax.swing.border.EmptyBorder
 
 class SceneTimerDetailPanel : JPanel(), TimerRefreshable {
 
+    val connectionStateLabel: JLabel = JLabel()
     val sceneLabel: JLabel = JLabel("Loading...")
     val timerUpLabel: JLabel = JLabel()
     val timerDeviderLabel: JLabel = JLabel("/")
@@ -42,12 +45,16 @@ class SceneTimerDetailPanel : JPanel(), TimerRefreshable {
         layout = BorderLayout(10, 10)
         border = EmptyBorder(10, 10, 10, 10)
 
+        connectionStateLabel.horizontalAlignment = SwingConstants.CENTER
+        connectionStateLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, 12)
+
         sceneLabel.horizontalAlignment = SwingConstants.CENTER
         sceneLabel.font = Font(Theme.get.FONT_FAMILY, Font.PLAIN, 18)
 
         val topPanel = JPanel()
         topPanel.background = null
         topPanel.layout = BorderLayout(10, 10)
+        topPanel.add(connectionStateLabel, BorderLayout.PAGE_START)
         topPanel.add(sceneLabel, BorderLayout.CENTER)
         add(topPanel, BorderLayout.PAGE_START)
 
@@ -82,6 +89,8 @@ class SceneTimerDetailPanel : JPanel(), TimerRefreshable {
     }
 
     override fun refreshTimer() {
+        refreshConnectionState()
+
         if (OBSSceneTimer.timerMessage == null) {
             sceneLabel.text = "No data received"
             return
@@ -132,5 +141,22 @@ class SceneTimerDetailPanel : JPanel(), TimerRefreshable {
         timerUpLabel.foreground = color
         timerDeviderLabel.foreground = color
         timerDownLabel.foreground = color
+    }
+
+    override fun refreshConnectionState() {
+        if (OBSSceneTimer.timerMessage != null && TimerClient.getConnectionState() == ConnectionState.CONNECTED) {
+            connectionStateLabel.isVisible = false
+            return
+        }
+
+        connectionStateLabel.isVisible = true
+        connectionStateLabel.text = getConnectionStateRepresentation()
+    }
+
+    private fun getConnectionStateRepresentation(): String {
+        if (TimerClient.getConnectionState() == ConnectionState.CONNECTING) {
+            return "Connecting to ${SceneTimerProperties.timerServerAddress}..."
+        }
+        return TimerClient.getConnectionState().text
     }
 }

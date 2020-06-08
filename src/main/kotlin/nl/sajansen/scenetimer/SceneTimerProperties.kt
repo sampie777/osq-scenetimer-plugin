@@ -19,6 +19,7 @@ object SceneTimerProperties {
     private val properties = Properties()
 
     var timerServerAddress: String = Config.obsAddress.replace(":4444", ":4050")
+    var reconnectionTimeout: Long = 3000
     var timerCountUpFontSize: Int = 40
     var timerCountDownFontSize: Int = 56
 
@@ -32,6 +33,7 @@ object SceneTimerProperties {
         }
 
         timerServerAddress = properties.getProperty("timerServerAddress", timerServerAddress)
+        reconnectionTimeout = properties.getProperty("reconnectionTimeout", reconnectionTimeout.toString()).toLong()
         timerCountUpFontSize = properties.getProperty("timerCountUpFontSize", timerCountUpFontSize.toString()).toInt()
         timerCountDownFontSize = properties.getProperty("timerCountDownFontSize", timerCountDownFontSize.toString()).toInt()
 
@@ -42,7 +44,8 @@ object SceneTimerProperties {
 
     fun save() {
         logger.info("Saving scene timer plugin properties")
-        properties.setProperty("timerServerAddress", timerServerAddress.toString())
+        properties.setProperty("timerServerAddress", timerServerAddress)
+        properties.setProperty("reconnectionTimeout", reconnectionTimeout.toString())
         properties.setProperty("timerCountUpFontSize", timerCountUpFontSize.toString())
         properties.setProperty("timerCountDownFontSize", timerCountDownFontSize.toString())
 

@@ -14,6 +14,13 @@ object TimerRefreshableRegister {
         }
     }
 
+    fun refreshConnectionState() {
+        val componentsCopy = components.toTypedArray()
+        for (component in componentsCopy) {
+            component.refreshConnectionState()
+        }
+    }
+
     fun register(component: TimerRefreshable) {
         logger.info("Registering component: ${component::class.java}")
         components.add(component)
