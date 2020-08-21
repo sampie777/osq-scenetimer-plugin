@@ -1,6 +1,5 @@
 package nl.sajansen.scenetimer
 
-import gui.MainFrame
 import java.util.*
 
 object PluginInfo {
